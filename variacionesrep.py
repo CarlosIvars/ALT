@@ -8,9 +8,11 @@ def variacionesRepeticion(elementos, cantidad):
             yield sol.copy()
         else:
             for opcion in elementos:
-                sol.append(opcion)
-                yield from backtracking(sol)
-                sol.pop()
+                #condición de prometedor
+                if opcion not in sol:
+                    sol.append(opcion)
+                    yield from backtracking(sol)
+                    sol.pop()
                 
     yield from backtracking([])
 
