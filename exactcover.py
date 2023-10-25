@@ -6,31 +6,32 @@ def exact_cover(listaConjuntos, U=None):
     # permitimos que nos pasen U, si no lo hacen lo calculamos:
     if U is None:
         U = set().union(*listaConjuntos) 
-        print("Universo = " + str(U))
+        
     
     def backtracking(sol, cjtAcumulado):
         # consulta los métodos isdisjoint y union de la clase set,
         # podrías necesitarlos
-        if len(sol) == len(listaConjuntos):
-            print("ojo piojo\n")
-            if cjtAcumulado == U:
-                print("ole!\n")
+        if len(sol) == len(listaConjuntos): #condicion de completitud
+            if cjtAcumulado == U: #condicion de factibilidad
                 yield sol.copy()
         else:
             cjt=listaConjuntos[len(sol)] #el conjunto a considerar ahora
             #ramificar,hemos desenrollado los 2 casos:
-            #caso 1
-            print("sol = " + str(sol))
-            print("cjt = " + str(cjt))
-            print("cjtAc = " + str(cjtAcumulado)+"\n")
+            #caso 1      
             if cjt.isdisjoint(cjtAcumulado):
-                yield from backtracking(sol.append(1), cjtAcumulado.union(cjt))  
+                aux = cjtAcumulado
+                sol.append(1)
+                yield from backtracking(sol, cjtAcumulado.union(cjt)) 
                 sol.pop()
-                cjtAcumulado.remove(cjt)
+                cjtAcumulado = aux
+
             #caso 2
-            yield from backtracking(sol.append(0), cjtAcumulado)
+            sol.append(0)
+            yield from backtracking(sol, cjtAcumulado)
+            sol.pop()
 
     yield from backtracking([], set())
+    
 
 if __name__ == "__main__":
     listaConjuntos = [{"casa","coche","gato"},
@@ -42,5 +43,13 @@ if __name__ == "__main__":
                       {"perro", "boli"},
                       {"coche","moto"},
                       {"casa"}]
+    
+    datos = [{1,2,3},{2,3,4},{4,5},{1,5},{2,3}]
+    
     for solucion in exact_cover(listaConjuntos):
-        print(solucion)
+        res = []
+        for index,elem in enumerate(solucion):
+            if elem == 1:
+                res.append(listaConjuntos[index])
+        print(res)
+        
