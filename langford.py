@@ -9,11 +9,23 @@ def langford(N):
     N2   = 2*N
     seq  = [0]*N2
     def backtracking(num):
-        if num<=0:
+        if num<=0: #condicion de completitud
             yield "-".join(map(str, seq))
         else:
-            # buscamos una posicion para situar una pareja num
-            pass # COMPLETAR
+            #buscamos una posicion para situar una pareja num
+            for i in range(N2-num-1):     
+                for j in range(i+num+1, N2):
+                    #es valida es posicion?
+                    if seq[i] == 0 and seq[j] == 0:
+                        #efectuamos cambio
+                        seq[i], seq[j] = num, num
+                        if j-i-1 == num: #estado prometedor
+                            yield from backtracking(num-1)
+                        #deshacemos cambio en caso de fallo
+                        seq[i], seq[j] = 0, 0
+                    
+                        
+                        
 
     if N%4 in (0,3):
         yield from backtracking(N)
