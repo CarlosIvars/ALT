@@ -12,19 +12,15 @@ def exact_cover(listaConjuntos, U=None):
         # consulta los métodos isdisjoint y union de la clase set,
         # podrías necesitarlos
         if len(sol) == len(listaConjuntos): #condicion de completitud
-            if cjtAcumulado == U: #condicion de factibilidad
+            if cjtAcumulado == U:           #condicion de factibilidad
                 yield sol.copy()
         else:
-            cjt=listaConjuntos[len(sol)] #el conjunto a considerar ahora
-            #ramificar,hemos desenrollado los 2 casos:
+            cjt=listaConjuntos[len(sol)]    #el conjunto a considerar ahora
             #caso 1      
             if cjt.isdisjoint(cjtAcumulado):
-                aux = cjtAcumulado
                 sol.append(1)
                 yield from backtracking(sol, cjtAcumulado.union(cjt)) 
                 sol.pop()
-                cjtAcumulado = aux
-
             #caso 2
             sol.append(0)
             yield from backtracking(sol, cjtAcumulado)
