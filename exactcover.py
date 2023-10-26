@@ -13,7 +13,8 @@ def exact_cover(listaConjuntos, U=None):
         # podrías necesitarlos
         if len(sol) == len(listaConjuntos): #condicion de completitud
             if cjtAcumulado == U:           #condicion de factibilidad
-                yield sol.copy()
+                #devolvemos los elementos que en el vector solcuión se encuentren a 1
+                yield [v for v,s in zip(listaConjuntos,sol) if s==1]
         else:
             cjt=listaConjuntos[len(sol)]    #el conjunto a considerar ahora
             #caso 1      
@@ -40,12 +41,6 @@ if __name__ == "__main__":
                       {"coche","moto"},
                       {"casa"}]
     
-    datos = [{1,2,3},{2,3,4},{4,5},{1,5},{2,3}]
-    
     for solucion in exact_cover(listaConjuntos):
-        res = []
-        for index,elem in enumerate(solucion):
-            if elem == 1:
-                res.append(listaConjuntos[index])
-        print(res)
+        print(solucion)
         
