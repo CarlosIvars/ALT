@@ -17,11 +17,10 @@ def langford(N):
                     #posicion objetivo a rellenar    
                     j = i+num+1
                     #es valida es posicion?
-                    if seq[i] == 0 and seq[j] == 0:
+                    if seq[i] == 0 and seq[j] == 0:# es prometedor?
                         #efectuamos cambio
                         seq[i], seq[j] = num, num
-                        if j-i-1 == num: #estado prometedor
-                            yield from backtracking(num-1)
+                        yield from backtracking(num-1)
                         #deshacemos cambio en caso de fallo
                         seq[i], seq[j] = 0, 0
                     
