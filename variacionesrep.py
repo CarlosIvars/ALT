@@ -1,5 +1,5 @@
 # AUTORES:
-# (poner aquí el nombre o 2 nombres del equipo de prácticas
+# Álvaro Garabal Castro, Carlos Ivars Ferrer
 
 def variacionesRepeticion(elementos, cantidad):
     
