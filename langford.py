@@ -9,10 +9,10 @@ def langford(N):
     N2   = 2*N
     seq  = [0]*N2
     def backtracking(num):
-        if num<=0: #condicion de completitud
+        if num<=0: #condicion de completitud y factibilidad
             yield "-".join(map(str, seq))
         else:
-            #buscamos una posicion para situar una pareja num
+            #buscamos una posicion para situar una pareja num, ramificamos
             for i in range(N2-num-1):     
                 for j in range(i+num+1, N2):
                     #es valida es posicion?
@@ -29,7 +29,9 @@ def langford(N):
 
     if N%4 in (0,3):
         yield from backtracking(N)
-
+    ###modificacion mia
+    else:
+        print("No hay solución al problema")
 if __name__ == "__main__":
     if len(sys.argv) not in (2,3):
         print('\nUsage: %s N [maxsoluciones]\n' % (sys.argv[0],))
@@ -51,5 +53,6 @@ if __name__ == "__main__":
     for sol in langford(N):
         if numSolutions is not None and i>=numSolutions:
             break
+
         i += 1
         print(f'sol {i:4} ->',sol)
