@@ -18,7 +18,7 @@ def exact_cover(listaConjuntos, U=None):
         else:
             cjt=listaConjuntos[len(sol)]    #el conjunto a considerar ahora
             #caso 1      
-            if cjt.isdisjoint(cjtAcumulado):
+            if cjt.isdisjoint(cjtAcumulado): #condicion de prometedor
                 sol.append(1)
                 yield from backtracking(sol, cjtAcumulado.union(cjt)) 
                 sol.pop()
