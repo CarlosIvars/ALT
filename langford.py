@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # AUTORES:
-# (poner aquí el nombre o 2 nombres del equipo de prácticas
+# Álvaro Garabal Castro, Carlos Ivars Ferrer
 
 import sys
 
