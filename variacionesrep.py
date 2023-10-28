@@ -42,8 +42,8 @@ if __name__ == "__main__":
         for x in variacionesRepeticion(['tomate','queso','anchoas'],n):
             print(x)
 
-        print('Combinaciones con combinacion n =',3)
-        for x in combinaciones(['tomate','queso','anchoas','aceitunas'],3):
-            print(x)
+    print('Combinaciones con combinacion n =',3)
+    for x in combinaciones(['tomate','queso','anchoas','aceitunas'],3):
+        print(x)
 
     # probar las actividades 1 y 2 para permutaciones y combinaciones
