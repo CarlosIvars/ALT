@@ -3,7 +3,7 @@ import sys
 from exactcover import exact_cover
 
 # AUTORES:
-# (poner aquí el nombre o 2 nombres del equipo de prácticas
+# Álvaro Garabal Castro y Carlos Ivars Ferrer
 
 def langford_data_structure(N):
     # n1,n2,... means that the value has been used
@@ -15,6 +15,15 @@ def langford_data_structure(N):
     # crear la lista de conjuntos que resuelva la
     # secuencia de Langford con exact_cover
     # COMPLETAR
+    U=[]
+    for i in range(1,N+1):
+        #crear lista de posibles posiciones para i
+        for j in range(N*2-i-1):
+            
+            U.append({position(j),position(i+j+1),value(i)})
+    
+    return U
+        
     # return U
 
 def langford_exact_cover(N):

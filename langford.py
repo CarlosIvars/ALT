@@ -13,14 +13,14 @@ def langford(N):
             yield "-".join(map(str, seq))
         else:
             #buscamos una posicion para situar una pareja num, ramificamos
-            for i in range(N2-num-1):     
-                for j in range(i+num+1, N2):
+            for i in range(N2-num-1): 
+                    #posicion objetivo a rellenar    
+                    j = i+num+1
                     #es valida es posicion?
-                    if seq[i] == 0 and seq[j] == 0:
+                    if seq[i] == 0 and seq[j] == 0:# es prometedor?
                         #efectuamos cambio
                         seq[i], seq[j] = num, num
-                        if j-i-1 == num: #estado prometedor
-                            yield from backtracking(num-1)
+                        yield from backtracking(num-1)
                         #deshacemos cambio en caso de fallo
                         seq[i], seq[j] = 0, 0
                     
