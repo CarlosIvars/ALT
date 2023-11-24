@@ -41,7 +41,22 @@ def voraz_x_instante(costMatrix):
     M = costMatrix.shape[0] # nº piezas
 
     # COMPLETAR
+    solution = [0] * M
+    score = 0
+    usadas = set()
     
+    for i in range(M):
+        min_elem = costMatrix[0][i]
+        min_index = 0
+        for j in range(1,M):
+            if costMatrix[j][i] < min_elem and j not in usadas:
+                min_elem = costMatrix[j][i]
+                min_index = j
+
+        usadas.add(min_index)
+        score += min_elem
+        solution[min_index] = i 
+                  
     return score,solution
 
 def voraz_x_coste(costMatrix):
