@@ -62,9 +62,24 @@ def voraz_x_instante(costMatrix):
 def voraz_x_coste(costMatrix):
     # costMatrix[i,j] el coste de situar pieza i en instante j
     M = costMatrix.shape[0] # nº piezas
-
     # COMPLETAR
-   
+    #Creación de tripletas
+    tripletas = []
+    for i in range(M):
+        for j in range(M):
+            coste = costMatrix[i][j]
+            tripletas.append((coste,i,j))
+    tripletas.sort()
+
+    usadas = set()
+    score =  0
+    solution = [0] * M
+    for tripleta in tripletas:
+        if tripleta[2] not in usadas:
+            usadas.add(tripleta[2])
+            solution[tripleta[1]] = tripleta[2]
+            score += tripleta[0]
+
     return score,solution
 
 def voraz_combina(costMatrix):
