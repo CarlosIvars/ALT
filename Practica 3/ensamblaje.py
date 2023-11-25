@@ -64,20 +64,24 @@ def voraz_x_coste(costMatrix):
     M = costMatrix.shape[0] # nº piezas
     # COMPLETAR
     #Creación de tripletas
-    tripletas = []
-    for i in range(M):
-        for j in range(M):
-            coste = costMatrix[i][j]
-            tripletas.append((coste,i,j))
+    tripletas = [(costMatrix[i][j], i, j) for i in range(M) for j in range(M)]
+    #ordenamos las tripletas por coste
     tripletas.sort()
+    print(tripletas)
 
     usadas = set()
+    p_usadas = set()
     score =  0
     solution = [0] * M
     for tripleta in tripletas:
-        if tripleta[2] not in usadas:
+        print(tripleta)
+        if tripleta[2] not in usadas and tripleta[1] not in p_usadas:
+            print(tripleta)
             usadas.add(tripleta[2])
+            p_usadas.add(tripleta[1])
             solution[tripleta[1]] = tripleta[2]
+            print(solution)
+            
             score += tripleta[0]
 
     return score,solution
