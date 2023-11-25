@@ -103,14 +103,10 @@ def voraz_x_coste(costMatrix):
     score =  0
     solution = [0] * M
     for tripleta in tripletas:
-        print(tripleta)
         if tripleta[2] not in usadas and tripleta[1] not in p_usadas:
-            print(tripleta)
             usadas.add(tripleta[2])
             p_usadas.add(tripleta[1])
             solution[tripleta[1]] = tripleta[2]
-            print(solution)
-            
             score += tripleta[0]
 
     return score,solution
