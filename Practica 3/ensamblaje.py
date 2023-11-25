@@ -96,7 +96,6 @@ def voraz_x_coste(costMatrix):
     tripletas = [(costMatrix[i][j], i, j) for i in range(M) for j in range(M)]
     #ordenamos las tripletas por coste
     tripletas.sort()
-    print(tripletas)
 
     usadas = set()
     p_usadas = set()
