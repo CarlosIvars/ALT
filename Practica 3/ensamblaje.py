@@ -29,14 +29,43 @@ def naive_solution(costMatrix):
     return compute_score(costMatrix,solution), solution
 
 def voraz_x_pieza(costMatrix):
-    # costMatrix[i,j] el coste de situar pieza i en instante j
-    M = costMatrix.shape[0] # nº piezas
+ # costMatrix[i,j] el coste de situar pieza i en instante j
+    #M = costMatrix.shape[0] # nº piezas
 
     # COMPLETAR
-    
+    solution = []
+    score = 0
+    usadas = set()
+
+    for pieza in costMatrix:
+
+        pieza_limpia = [valor for index,valor in enumerate(pieza) if index not in usadas]
+        minN = min(pieza_limpia)
+        minPos = pieza.index(minN)
+
+        score += minN
+        usadas.add(minPos)
+        solution.append(minPos)
+
     return score,solution
 
 def voraz_x_instante(costMatrix):
+    '''
+    for j in range(M):
+        columna = []
+        for i in range(M):
+            columna = columna.append(costMatrix[i][j])
+
+        columna_limpia = [valor for valor in range(M) if valor not in usadas]
+        minN = min(columna_limpia)
+        minPos = columna.index(minN)
+        usadas.add(minPos)
+
+        score += minN
+        solution[minPos] = j
+
+    '''
+    
     # costMatrix[i,j] el coste de situar pieza i en instante j
     M = costMatrix.shape[0] # nº piezas
 
@@ -89,6 +118,11 @@ def voraz_x_coste(costMatrix):
 def voraz_combina(costMatrix):
     
     # COMPLETAR
+    cp ,sp = voraz_x_pieza(costMatrix)
+    ci, si = voraz_x_instante(costMatrix)
+    cc, sc = voraz_x_coste(costMatrix)
+    score = min(cp,ci,cc)
+    solution = sp if score == cp else (si if score == ci else sc) 
     
     return score,solution
         
