@@ -32,22 +32,24 @@ def voraz_x_pieza(costMatrix):
  # costMatrix[i,j] el coste de situar pieza i en instante j
     #M = costMatrix.shape[0] # nº piezas
 
-    # COMPLETAR
+    # costMatrix[i,j] es el costo de situar la pieza i en el instante j
+    M = costMatrix.shape[0]  # número de piezas
+    N = costMatrix.shape[1]  # número de instantes
+
     solution = []
     score = 0
     usadas = set()
 
-    for pieza in costMatrix:
-
-        pieza_limpia = [valor for index,valor in enumerate(pieza) if index not in usadas]
+    for _ in range(M):
+        pieza_limpia = [valor for index, valor in enumerate(costMatrix[_]) if index not in usadas]
         minN = min(pieza_limpia)
-        minPos = pieza.index(minN)
+        minPos = costMatrix[_].tolist().index(minN)
 
         score += minN
         usadas.add(minPos)
         solution.append(minPos)
 
-    return score,solution
+    return score, solution
 
 def voraz_x_instante(costMatrix):
     '''
