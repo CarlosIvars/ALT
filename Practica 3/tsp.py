@@ -466,7 +466,30 @@ class TSP_Cota4(TSP):
     no visitado (más el último visitado). 
     Es fácil calcularla de manera incremental.
     '''
+    def initial_solution(self):
+        initial = [ self.first_vertex ]
+        initial_score = 0
+        return (initial_score, initial)
 
+    def crear_tabla(self):
+
+        tabla = {v:self.lowest_out_weight(v) for v in self.G.nodes}
+        return tabla    
+
+
+    def branch(self, s_score, s, t):
+        '''
+        s_score es el score de s
+        s es una solución parcial
+        '''
+        lastvertex = s[-1]
+        
+
+        for v,w in self.G.edges_from(lastvertex):
+            if v not in s:
+                yield (s_score + w, s+[v])   
+
+    
     pass
     # COMPLETAR
 
@@ -477,6 +500,10 @@ class TSP_Cota5(TSP):
     y llegan a vértices no visitados o al vértice origen.
     No es incremental.
     '''
+    def initial_solution(self):
+        initial = [ self.first_vertex ]
+        initial_score = 0
+        return (initial_score, initial)
     
     pass
     # COMPLETAR
@@ -492,7 +519,10 @@ class TSP_Cota6(TSP):
     calcular en una sola pasada los caminos desde cada
     vértice al inicial.
     '''
-    
+    def initial_solution(self):
+        initial = [ self.first_vertex ]
+        initial_score = 0
+        return (initial_score, initial)
     pass
     # COMPLETAR
 
@@ -504,7 +534,10 @@ class TSP_Cota7(TSP):
     el primero y el último de la solución parcial).
     No admite sol. incremental.
     '''
-    
+    def initial_solution(self):
+        initial = [ self.first_vertex ]
+        initial_score = 0
+        return (initial_score, initial)    
     pass
     # COMPLETAR
 
