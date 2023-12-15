@@ -468,30 +468,26 @@ class TSP_Cota4(TSP):
     '''
     def initial_solution(self):
         initial = [ self.first_vertex ]
-        initial_score = 0
+        initial_score = 13##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
 
-    def crear_tabla(self):
+    def crear_tabla(self): ##necesitamos ponerlo como atributo de clase para no llamarlo cada vez que branch
 
-        tabla = {v:self.lowest_out_weight(v) for v in self.G.nodes}
+        tabla = {v:self.G.lowest_out_weight(v) for v in self.G.nodes()}
         return tabla    
-
-
-    def branch(self, s_score, s, t):
+    
+    def branch(self, s_score, s):
         '''
         s_score es el score de s
         s es una solución parcial
         '''
+        t = self.crear_tabla()
         lastvertex = s[-1]
-        
-
+    
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + w, s+[v])   
+                yield (s_score - t.get(v) + w, s+[v])   
 
-    
-    pass
-    # COMPLETAR
 
 class TSP_Cota5(TSP):
     '''
@@ -581,7 +577,7 @@ class TSP_Cota7E(TSP_Cota7, BranchBoundExplicit):
 # ir descomentando a medida que se implementen las cotas
 repertorio_cotas = [('Cota1I',TSP_Cota1I),
                     # ('Cota1E',TSP_Cota1E),
-                    # ('Cota4I',TSP_Cota4I),
+                     ('Cota4I',TSP_Cota4I),
                     # ('Cota4E',TSP_Cota4E),
                     # ('Cota5I',TSP_Cota5I),
                     # ('Cota5E',TSP_Cota5E),
