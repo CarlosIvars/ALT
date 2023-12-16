@@ -473,7 +473,7 @@ class TSP_Cota4(TSP):
         initial = [ self.first_vertex ]
         if TSP_Cota4.tabla is None:
            TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
-        initial_score = sum(TSP_Cota4.tabla.get(v) for v in TSP_Cota4.tabla)##cota óptima, sumar todos los pesos del diccionario
+        initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
 
     def crear_tabla(G):  # Método estático
@@ -485,12 +485,10 @@ class TSP_Cota4(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
-
         lastvertex = s[-1]
-    
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score - TSP_Cota4.tabla.get(v) + w, s+[v])   
+                yield (s_score - TSP_Cota4.tabla.get(lastvertex) + w, s+[v])   
 
 
 class TSP_Cota5(TSP):
@@ -505,8 +503,31 @@ class TSP_Cota5(TSP):
         initial_score = 0
         return (initial_score, initial)
     
-    pass
-    # COMPLETAR
+    def branch(self, s_score, s):
+        '''
+        s_score es el score de s
+        s es una solución parcial
+        '''
+
+        lastvertex = s[-1]
+        cota = 0
+        
+        tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes() if v not in s}
+        cota = sum(tabla.values())
+        
+        for vertex in self.G.nodes():
+            if vertex not in s:
+                bpeso = np.Infinity
+                for v,w in self.G.edges_from(vertex):
+                    if v not in s and w < bpeso:
+                        bpeso = w
+                cota += bpeso        
+                
+        #calculamos el peso de las aristas que salen 
+        for v,w in self.G.edges_from(lastvertex):
+            if v not in s:
+                yield (s_score + cota, s+[v])
+    
     
 
 class TSP_Cota6(TSP):
@@ -519,12 +540,29 @@ class TSP_Cota6(TSP):
     calcular en una sola pasada los caminos desde cada
     vértice al inicial.
     '''
+    
+    dij = None
+    
     def initial_solution(self):
         initial = [ self.first_vertex ]
         initial_score = 0
+        
+        if TSP_Cota6.dij is None:
+            TSP_Cota6.dij = self.G.Dijkstra(self.first_vertex, reverse=True)[0]
+        
         return (initial_score, initial)
-    pass
-    # COMPLETAR
+    
+    def branch(self, s_score, s):
+        '''
+        s_score es el score de s
+        s es una solución parcial
+        '''
+
+        lastvertex = s[-1]   
+        for v,w in self.G.edges_from(lastvertex):
+            if v not in s:
+                yield (s_score + w + TSP_Cota6.dij.get(v) - TSP_Cota6.dij.get(lastvertex), s+[v])
+    
 
 class TSP_Cota7(TSP):
     '''
@@ -537,9 +575,8 @@ class TSP_Cota7(TSP):
     def initial_solution(self):
         initial = [ self.first_vertex ]
         initial_score = 0
-        return (initial_score, initial)    
-    pass
-    # COMPLETAR
+        return (initial_score, initial)
+
 
 
 ######################################################################
@@ -581,7 +618,7 @@ class TSP_Cota7E(TSP_Cota7, BranchBoundExplicit):
 # ir descomentando a medida que se implementen las cotas
 repertorio_cotas = [('Cota1I',TSP_Cota1I),
                     # ('Cota1E',TSP_Cota1E),
-                     ('Cota4I',TSP_Cota4I),
+                    # ('Cota4I',TSP_Cota4I),
                     # ('Cota4E',TSP_Cota4E),
                     # ('Cota5I',TSP_Cota5I),
                     # ('Cota5E',TSP_Cota5E),
