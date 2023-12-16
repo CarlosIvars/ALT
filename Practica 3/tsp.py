@@ -466,27 +466,31 @@ class TSP_Cota4(TSP):
     no visitado (más el último visitado). 
     Es fácil calcularla de manera incremental.
     '''
+    #atributo de la classe
+    tabla = None
+
     def initial_solution(self):
         initial = [ self.first_vertex ]
-        initial_score = 13##cota óptima, sumar todos los pesos del diccionario
+        if TSP_Cota4.tabla is None:
+           TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
+        initial_score = sum(TSP_Cota4.tabla.get(v) for v in TSP_Cota4.tabla)##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
 
-    def crear_tabla(self): ##necesitamos ponerlo como atributo de clase para no llamarlo cada vez que branch
-
-        tabla = {v:self.G.lowest_out_weight(v) for v in self.G.nodes()}
-        return tabla    
+    def crear_tabla(G):  # Método estático
+        tabla = {v: G.lowest_out_weight(v) for v in G.nodes()}
+        return tabla
     
     def branch(self, s_score, s):
         '''
         s_score es el score de s
         s es una solución parcial
         '''
-        t = self.crear_tabla()
+
         lastvertex = s[-1]
     
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score - t.get(v) + w, s+[v])   
+                yield (s_score - TSP_Cota4.tabla.get(v) + w, s+[v])   
 
 
 class TSP_Cota5(TSP):
