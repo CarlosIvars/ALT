@@ -265,7 +265,69 @@ def comparar_algoritmos(root_seed, low, high):
 
 def comparar_sol_inicial(root_seed, low, high):
     # COMPLETAR
-    pass
+    
+    #primeras estadísticas
+    print('talla',end=' ')
+    for label in cjtAlgoritmos:
+        print(f'{label:>10}',end=' ')
+    print()
+    numInstancias = 10
+    for talla in range(5,15+1):
+        dtalla = collections.defaultdict(float)
+
+        np.random.seed(root_seed)
+        seeds = np.random.randint(low=0, high=9999, size=numInstancias)
+
+        for seed in seeds:
+            cM = genera_instancia(talla, low=low, high=high, seed=seed)
+            for label,function in cjtAlgoritmos.items():
+                score,solution = function(cM)
+                dtalla[label] += score
+
+        print(f'{talla:>5}',end=' ')
+        for label in cjtAlgoritmos:
+            media = dtalla[label]/numInstancias
+            print(f'{media:10.2f}', end=' ')
+        print()
+    print()
+        
+    #iteramos sobre las estadísticas a ver, nueva parte
+    estadisticas = ['iterations', 'gen_states', 'podas_opt', 'maxA']
+    for estadistica in estadisticas:
+        print(f'{" " + estadistica + " ":-^100}')
+        print('talla',end=' ')
+        
+        for label in cjtAlgoritmos:
+            print(f'{label + "+RyP" if label != "RyP" else "RyP":>15}',end=' ')         
+        print()
+        
+        numInstancias = 10
+        
+        for talla in range(5,15+1):
+            dtalla = collections.defaultdict(float)
+
+            np.random.seed(root_seed)
+            seeds = np.random.randint(low=0, high=9999, size=numInstancias)
+
+            for seed in seeds:
+                cM = genera_instancia(talla, low=low, high=high, seed=seed)                   
+                for label,function in cjtAlgoritmos.items():
+                    
+                    intial_c, initial_sol = function(cM)
+                        
+                    if label == 'RyP':
+                        initial_c, initial_sol = np.inf, None
+                    
+                    problema = Ensamblaje(cM, initial_sol)
+                    fx, x, stats = problema.solve()
+                    dtalla[label] += stats[estadistica]
+
+            print(f'{talla:>5}',end=' ')
+            for label in cjtAlgoritmos:
+                media = dtalla[label]/numInstancias
+                print(f'{media:>15.2f}', end=' ')           
+            print()
+        print()
     
 def probar_ryp():
     ejemplo = np.array([[7, 3, 7, 2],
