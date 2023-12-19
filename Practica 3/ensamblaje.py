@@ -39,17 +39,33 @@ def voraz_x_pieza(costMatrix):
     solution = []
     score = 0
     usadas = set()
-
+    for fila in range(M):
+        piezas_posibles = [valor for index, valor in enumerate(costMatrix[fila]) if index not in usadas]
+        minValor = min(piezas_posibles)
+        indices_posibles = [ index for index, x  in enumerate(costMatrix[fila]) if x == minValor]
+        pos = 0
+        cond = True
+        while cond:
+            if indices_posibles[pos] not in usadas:
+                score += minValor
+                usadas.add(indices_posibles[pos])
+                solution.append(indices_posibles[pos])
+                cond = False
+            else: # usar el siguiente igual de la lista
+                pos += 1
+                 
+    return score, solution
+'''
     for _ in range(M):
         pieza_limpia = [valor for index, valor in enumerate(costMatrix[_]) if index not in usadas]
         minN = min(pieza_limpia)
+        print(minN)
         minPos = costMatrix[_].tolist().index(minN)
 
         score += minN
         usadas.add(minPos)
         solution.append(minPos)
-
-    return score, solution
+'''
 
 def voraz_x_instante(costMatrix):
     '''
@@ -75,7 +91,7 @@ def voraz_x_instante(costMatrix):
     solution = [0] * M
     score = 0
     usadas = set()
-    
+    '''
     for i in range(M):
         min_elem = costMatrix[0][i]
         min_index = 0
@@ -87,6 +103,23 @@ def voraz_x_instante(costMatrix):
         usadas.add(min_index)
         score += min_elem
         solution[min_index] = i 
+    '''
+    matriz_transpuesta = [[fila[i] for fila in costMatrix] for i in range(len(costMatrix[0]))]
+
+    for fila in range(M):
+        piezas_posibles = [valor for index, valor in enumerate(matriz_transpuesta[fila]) if index not in usadas]
+        minValor = min(piezas_posibles)
+        indices_posibles = [ index for index, x  in enumerate(matriz_transpuesta[fila]) if x == minValor]
+        pos = 0
+        cond = True
+        while cond:
+            if indices_posibles[pos] not in usadas:
+                score += minValor
+                usadas.add(indices_posibles[pos])
+                solution.append(indices_posibles[pos])
+                cond = False
+            else: # usar el siguiente igual de la lista
+                pos += 1
                   
     return score,solution
 
