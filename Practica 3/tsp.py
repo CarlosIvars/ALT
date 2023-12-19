@@ -561,7 +561,7 @@ class TSP_Cota6(TSP):
         lastvertex = s[-1]   
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + w + TSP_Cota6.dij.get(v) - TSP_Cota6.dij.get(lastvertex), s+[v])
+                yield (s_score + w - TSP_Cota6.dij.get(lastvertex) + TSP_Cota6.dij.get(v), s+[v])
     
 
 class TSP_Cota7(TSP):
@@ -576,6 +576,17 @@ class TSP_Cota7(TSP):
         initial = [ self.first_vertex ]
         initial_score = 0
         return (initial_score, initial)
+    
+    def branch(self, s_score, s):
+        '''
+        s_score es el score de s
+        s es una solución parcial
+        '''
+    
+        lastvertex = s[-1] 
+        for v,w in self.G.edges_from(lastvertex):
+            if v not in s:
+                yield (s_score + w + self.G.Dijkstra1dst(v, self.first_vertex, set(s)) , s+[v])
 
 
 
@@ -624,7 +635,7 @@ repertorio_cotas = [('Cota1I',TSP_Cota1I),
                     # ('Cota5E',TSP_Cota5E),
                     # ('Cota6I',TSP_Cota6I),
                     # ('Cota6E',TSP_Cota6E),
-                    # ('Cota7I',TSP_Cota7I),
+                    ('Cota7I',TSP_Cota7I),
                     # ('Cota7E',TSP_Cota7E)
                     ]
 
