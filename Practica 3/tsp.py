@@ -471,14 +471,13 @@ class TSP_Cota4(TSP):
 
     def initial_solution(self):
         initial = [ self.first_vertex ]
+        
         if TSP_Cota4.tabla is None:
-           TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
+           TSP_Cota4.tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes()}   
+               
         initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
 
-    def crear_tabla(G):  # Método estático
-        tabla = {v: G.lowest_out_weight(v) for v in G.nodes()}
-        return tabla
     
     def branch(self, s_score, s):
         '''
@@ -554,7 +553,7 @@ class TSP_Cota6(TSP):
         lastvertex = s[-1]   
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + w + TSP_Cota6.dij.get(v) - TSP_Cota6.dij.get(lastvertex), s+[v])
+                yield (s_score + w - TSP_Cota6.dij.get(lastvertex) + TSP_Cota6.dij.get(v), s+[v])
     
 
 class TSP_Cota7(TSP):
@@ -569,6 +568,19 @@ class TSP_Cota7(TSP):
         initial = [ self.first_vertex ]
         initial_score = 0
         return (initial_score, initial)
+    
+    def branch(self, s_score, s):
+        '''
+        s_score es el score de s
+        s es una solución parcial
+        '''
+    
+        lastvertex = s[-1] 
+        for v,w in self.G.edges_from(lastvertex):
+            if v not in s:
+                x = self.G.Dijkstra1dst(v, self.first_vertex, set(s))
+                print(x)
+                yield (s_score + w + x , s+[v])
 
 
 
@@ -611,13 +623,13 @@ class TSP_Cota7E(TSP_Cota7, BranchBoundExplicit):
 # ir descomentando a medida que se implementen las cotas
 repertorio_cotas = [('Cota1I',TSP_Cota1I),
                     # ('Cota1E',TSP_Cota1E),
-                    # ('Cota4I',TSP_Cota4I),
+                    ('Cota4I',TSP_Cota4I),
                     # ('Cota4E',TSP_Cota4E),
                     # ('Cota5I',TSP_Cota5I),
                     # ('Cota5E',TSP_Cota5E),
                     # ('Cota6I',TSP_Cota6I),
                     # ('Cota6E',TSP_Cota6E),
-                    # ('Cota7I',TSP_Cota7I),
+                    ('Cota7I',TSP_Cota7I),
                     # ('Cota7E',TSP_Cota7E)
                     ]
 
