@@ -498,35 +498,28 @@ class TSP_Cota5(TSP):
     y llegan a vértices no visitados o al vértice origen.
     No es incremental.
     '''
+    tabla = None
+
     def initial_solution(self):
         initial = [ self.first_vertex ]
-        initial_score = 0
+        if TSP_Cota4.tabla is None:
+           TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
+        initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
+
+    def crear_tabla(G):  # Método estático
+        tabla = {v: G.lowest_out_weight(v) for v in G.nodes()}
+        return tabla
     
     def branch(self, s_score, s):
         '''
         s_score es el score de s
         s es una solución parcial
         '''
-
         lastvertex = s[-1]
-        cota = 0
-        
-        tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes() if v not in s}
-        cota = sum(tabla.values())
-        
-        for vertex in self.G.nodes():
-            if vertex not in s:
-                bpeso = np.Infinity
-                for v,w in self.G.edges_from(vertex):
-                    if v not in s and w < bpeso:
-                        bpeso = w
-                cota += bpeso        
-                
-        #calculamos el peso de las aristas que salen 
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + cota, s+[v])
+                yield (s_score - TSP_Cota4.tabla.get(lastvertex) + w, s+[v])
     
     
 
