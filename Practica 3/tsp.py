@@ -497,30 +497,28 @@ class TSP_Cota5(TSP):
     y llegan a vértices no visitados o al vértice origen.
     No es incremental.
     '''
-    tabla = None
 
     def initial_solution(self):
-        initial = [ self.first_vertex ]
-        if TSP_Cota4.tabla is None:
-           TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
-        initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
+        initial = [ self.first_vertex ]        
+        initial_score = 0
         return (initial_score, initial)
 
-    def crear_tabla(G):  # Método estático
-        tabla = {v: G.lowest_out_weight(v) for v in G.nodes()}
-        return tabla
-    
     def branch(self, s_score, s):
         '''
         s_score es el score de s
         s es una solución parcial
         '''
-
         lastvertex = s[-1]   
-                
+        aux = 0       
+               
         for v,w in self.G.edges_from(lastvertex):
-            if v not in s:
-                yield (s_score + w + self.G.lowest_out_weight(v, set(s)), s+[v])
+            if v not in s:     
+                
+                ##aristas de menor costes que salen de 
+                
+                aux += self.G.lowest_out_weight(v, s[1:]) ##arista de menor coste del nodo que añadimos a la solución 
+                   
+                yield (self.G.path_weight(s) + w + aux, s+[v])
     
     
 
@@ -577,7 +575,7 @@ class TSP_Cota7(TSP):
         lastvertex = s[-1]
         for v,w in self.G.edges_from(lastvertex):
             if v not in s: 
-                yield (s_score + w + self.G.Dijkstra1dst(v, self.first_vertex, s), s+[v])
+                yield (self.G.path_weight(s) + w + self.G.Dijkstra1dst(v, self.first_vertex, s[1:]), s+[v])
 
 
 
@@ -619,15 +617,15 @@ class TSP_Cota7E(TSP_Cota7, BranchBoundExplicit):
 
 # ir descomentando a medida que se implementen las cotas
 repertorio_cotas = [('Cota1I',TSP_Cota1I),
-                    # ('Cota1E',TSP_Cota1E),
-                    # ('Cota4I',TSP_Cota4I),
-                    # ('Cota4E',TSP_Cota4E),
-                     ('Cota5I',TSP_Cota5I),
-                    # ('Cota5E',TSP_Cota5E),
-                    # ('Cota6I',TSP_Cota6I),
-                    # ('Cota6E',TSP_Cota6E),
-                     ('Cota7I',TSP_Cota7I),
-                    # ('Cota7E',TSP_Cota7E)
+                    ('Cota1E',TSP_Cota1E),
+                    ('Cota4I',TSP_Cota4I),
+                    ('Cota4E',TSP_Cota4E),
+                    ('Cota5I',TSP_Cota5I),
+                    ('Cota5E',TSP_Cota5E),
+                    ('Cota6I',TSP_Cota6I),
+                    ('Cota6E',TSP_Cota6E),
+                    ('Cota7I',TSP_Cota7I),
+                    ('Cota7E',TSP_Cota7E)
                     ]
 
 ######################################################################
