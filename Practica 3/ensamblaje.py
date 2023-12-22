@@ -68,59 +68,26 @@ def voraz_x_pieza(costMatrix):
 '''
 
 def voraz_x_instante(costMatrix):
-    '''
-    for j in range(M):
-        columna = []
-        for i in range(M):
-            columna = columna.append(costMatrix[i][j])
-
-        columna_limpia = [valor for valor in range(M) if valor not in usadas]
-        minN = min(columna_limpia)
-        minPos = columna.index(minN)
-        usadas.add(minPos)
-
-        score += minN
-        solution[minPos] = j
-
-    '''
-    
-    # costMatrix[i,j] el coste de situar pieza i en instante j
+     # costMatrix[i,j] el coste de situar pieza i en instante j
     M = costMatrix.shape[0] # nº piezas
-
-    # COMPLETAR
-    solution = [0] * M
-    score = 0
+    N = costMatrix.shape[1] # nº tiempos
+    solution = [None] * M
     usadas = set()
-    '''
-    for i in range(M):
-        min_elem = costMatrix[0][i]
-        min_index = 0
-        for j in range(1,M):
-            if costMatrix[j][i] < min_elem and j not in usadas:
-                min_elem = costMatrix[j][i]
-                min_index = j
+    score = 0
+    for columna in range(N):
+            instantes_posibles =  np.array([fila[columna] for fila in costMatrix])
+            best_score = np.inf
+            for pieza in range(len(instantes_posibles)):
+                if pieza not in usadas: 
+                    if instantes_posibles[pieza] < best_score:
+                        best_score  = instantes_posibles[pieza]
+                        pieza_usada = pieza
 
-        usadas.add(min_index)
-        score += min_elem
-        solution[min_index] = i 
-    '''
-    matriz_transpuesta = [[fila[i] for fila in costMatrix] for i in range(len(costMatrix[0]))]
+            solution[pieza_usada] = columna
+            score += best_score
+            usadas.add(pieza_usada)
+        
 
-    for fila in range(M):
-        piezas_posibles = [valor for index, valor in enumerate(matriz_transpuesta[fila]) if index not in usadas]
-        minValor = min(piezas_posibles)
-        indices_posibles = [ index for index, x  in enumerate(matriz_transpuesta[fila]) if x == minValor]
-        pos = 0
-        cond = True
-        while cond:
-            if indices_posibles[pos] not in usadas:
-                score += minValor
-                usadas.add(indices_posibles[pos])
-                solution.append(indices_posibles[pos])
-                cond = False
-            else: # usar el siguiente igual de la lista
-                pos += 1
-                  
     return score,solution
 
 def voraz_x_coste(costMatrix):
