@@ -497,10 +497,18 @@ class TSP_Cota5(TSP):
     y llegan a vértices no visitados o al vértice origen.
     No es incremental.
     '''
+    tabla = None
+
     def initial_solution(self):
         initial = [ self.first_vertex ]
-        initial_score = 0
+        if TSP_Cota4.tabla is None:
+           TSP_Cota4.tabla = TSP_Cota4.crear_tabla(self.G)        
+        initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
+
+    def crear_tabla(G):  # Método estático
+        tabla = {v: G.lowest_out_weight(v) for v in G.nodes()}
+        return tabla
     
     def branch(self, s_score, s):
         '''
