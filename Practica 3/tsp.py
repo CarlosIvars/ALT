@@ -661,7 +661,7 @@ def prueba_generador():
                     print(' ',g.check_TSP(x))
     
 
-# estas semillas se han probado para comprobar que los grafo generados
+# estas semillas se han probado para comprobar que los grafos generados
 # tienen una sola componente fuertemente conexa
 seeds = {                    
     10 : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
@@ -689,7 +689,61 @@ def experimento():
     '''
 
     # COMPLETAR
-    pass
+    """
+    for nV in range(10, 21):
+        # Diccionario para almacenar los resultados de cada cota
+        resultados = collections.defaultdict(list)
+
+        # Generamos entre 5 y 20 instancias para cada talla
+        for i in range(5, 21):
+            
+            # Establecemos una semilla para asegurarnos de tener una componente fuertemente conexa
+            np.random.seed(seeds[nV])
+            g = generate_random_digraph_1scc(nV)
+            
+            # Probar cada cota
+            for nombre, clase in repertorio_cotas:
+                tspi = clase(g)
+                fx, x, stats = tspi.solve()
+                if x is not None:
+                    resultados[nombre].append(fx)
+            
+        # Mostrar valores medios para cada cota
+        print(resultados)
+        """
+        
+    estadisticas = ['time', 'iterations', 'gen_states', 'podas_opt', 'maxA', 'cost_expl']
+    for estadistica in estadisticas:
+        print(f'{" " + estadistica + " ":-^165}')
+        print('talla',end=' ')
+        
+        for nombre, clase in repertorio_cotas:
+            print(f'{nombre:>15}',end=' ')         
+        print()
+        
+        for talla in range(10,20+1):
+            dtalla = collections.defaultdict(float)
+            
+            np.random.seed(seeds[talla])
+            
+            for numInstancias in range(5, 20+1):
+                
+                g = generate_random_digraph_1scc(talla)
+                for nombre,clase in repertorio_cotas:
+                    if talla <= tallaMax[nombre]:
+                        tspi = clase(g)
+                        fx,x,stats = tspi.solve()
+                        if x is not None:
+                            dtalla[nombre] += stats[estadistica]
+            
+            print(f'{talla:>5}',end=' ')
+            for nombre in repertorio_cotas:
+                media = dtalla[nombre]/numInstancias
+                print(f'{media:>15.2f}', end=' ') 
+            print()
+        print()
+        
+           
 
 
 
@@ -736,7 +790,7 @@ def prueba_mini():
 ######################################################################
             
 if __name__ == '__main__':
-    prueba_mini()
+    # prueba_mini()
     # prueba_generador()
-    # experimento()
+    experimento()
 
