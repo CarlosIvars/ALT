@@ -487,7 +487,7 @@ class TSP_Cota4(TSP):
         lastvertex = s[-1]
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score - TSP_Cota4.tabla.get(lastvertex) + w, s+[v])   
+                yield (s_score - TSP_Cota4.tabla.get(lastvertex, 0) + w, s+[v])   
 
 
 class TSP_Cota5(TSP):
@@ -553,7 +553,7 @@ class TSP_Cota6(TSP):
         lastvertex = s[-1]   
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + w - TSP_Cota6.dij.get(lastvertex) + TSP_Cota6.dij.get(v), s+[v])
+                yield (s_score + w - TSP_Cota6.dij.get(lastvertex, 0) + TSP_Cota6.dij.get(v, 0), s+[v])
     
 
 class TSP_Cota7(TSP):
@@ -726,20 +726,23 @@ def experimento():
             
             np.random.seed(seeds[talla])
             
-            for numInstancias in range(5, 20+1):
+            numInstancias = 10
                 
-                g = generate_random_digraph_1scc(talla)
-                for nombre,clase in repertorio_cotas:
-                    if talla <= tallaMax[nombre]:
-                        tspi = clase(g)
-                        fx,x,stats = tspi.solve()
-                        if x is not None:
-                            dtalla[nombre] += stats[estadistica]
+            g = generate_random_digraph_1scc(talla)
+            for nombre,clase in repertorio_cotas:
+                if talla <= tallaMax[nombre]:
+                    tspi = clase(g)
+                    fx,x,stats = tspi.solve()
+                    if x is not None:
+                        dtalla[nombre] += stats[estadistica]
             
             print(f'{talla:>5}',end=' ')
-            for nombre in repertorio_cotas:
+            for nombre,clase in repertorio_cotas:
                 media = dtalla[nombre]/numInstancias
-                print(f'{media:>15.2f}', end=' ') 
+                if media > 0:
+                    print(f'{media:>15.4f}', end=' ') 
+                else:
+                    print(f'{" ":>15}', end=' ')
             print()
         print()
         
