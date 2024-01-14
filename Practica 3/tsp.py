@@ -689,30 +689,8 @@ def experimento():
     '''
 
     # COMPLETAR
-    """
-    for nV in range(10, 21):
-        # Diccionario para almacenar los resultados de cada cota
-        resultados = collections.defaultdict(list)
-
-        # Generamos entre 5 y 20 instancias para cada talla
-        for i in range(5, 21):
-            
-            # Establecemos una semilla para asegurarnos de tener una componente fuertemente conexa
-            np.random.seed(seeds[nV])
-            g = generate_random_digraph_1scc(nV)
-            
-            # Probar cada cota
-            for nombre, clase in repertorio_cotas:
-                tspi = clase(g)
-                fx, x, stats = tspi.solve()
-                if x is not None:
-                    resultados[nombre].append(fx)
-            
-        # Mostrar valores medios para cada cota
-        print(resultados)
-        """
-        
     estadisticas = ['time', 'iterations', 'gen_states', 'podas_opt', 'maxA', 'cost_expl']
+    estadisticas_selec_impl = ['podas_opt', 'cost_exp']
     for estadistica in estadisticas:
         print(f'{" " + estadistica + " ":-^165}')
         print('talla',end=' ')
@@ -730,7 +708,8 @@ def experimento():
                 
             g = generate_random_digraph_1scc(talla)
             for nombre,clase in repertorio_cotas:
-                if talla <= tallaMax[nombre]:
+                #Evitamos resolver problemas que surja error (talla excedida o estadísticas que no poseen las cotas implícitas)
+                if talla <= tallaMax[nombre] and (estadisticas not in estadisticas_selec_impl or issubclass(BranchBoundExplicit)):
                     tspi = clase(g)
                     fx,x,stats = tspi.solve()
                     if x is not None:
@@ -793,7 +772,7 @@ def prueba_mini():
 ######################################################################
             
 if __name__ == '__main__':
-    # prueba_mini()
-    # prueba_generador()
-    experimento()
+    prueba_mini()
+    #prueba_generador()
+    #experimento()
 
