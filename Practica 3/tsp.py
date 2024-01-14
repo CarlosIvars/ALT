@@ -690,8 +690,8 @@ def experimento():
     '''
 
     # COMPLETAR
-    estadisticas = ['time', 'iterations', 'gen_states', 'podas_opt', 'maxA', 'cost_expl']
-    estadisticas_selec_impl = ['podas_opt', 'cost_exp']
+    estadisticas = ['time', 'iterations', 'gen_states', 'podas_opt', 'maxA','podas_expl', 'cost_expl']
+    estadisticas_selec_impl = ['podas_expl', 'cost_exp']
     for estadistica in estadisticas:
         print(f'{" " + estadistica + " ":-^165}')
         print('talla',end=' ')
@@ -705,17 +705,18 @@ def experimento():
             
             np.random.seed(seeds[talla])
             
-            numInstancias = 10
+            numInstancias = 20
+            semillas =  seeds[talla][:numInstancias]
+            for seed in semillas:    
+                g = generate_random_digraph(talla, seed = seed)
+                for nombre,clase in repertorio_cotas:
+                    #Evitamos resolver problemas que surja error (talla excedida o estadísticas que no poseen las cotas implícitas)
+                    if talla <= tallaMax[nombre] and (estadisticas not in estadisticas_selec_impl or issubclass(BranchBoundExplicit)):
+                        tspi = clase(g)
+                        fx,x,stats = tspi.solve()
+                        if x is not None:
+                            dtalla[nombre] += stats[estadistica]
                 
-            g = generate_random_digraph_1scc(talla)
-            for nombre,clase in repertorio_cotas:
-                #Evitamos resolver problemas que surja error (talla excedida o estadísticas que no poseen las cotas implícitas)
-                if talla <= tallaMax[nombre] and (estadisticas not in estadisticas_selec_impl or issubclass(BranchBoundExplicit)):
-                    tspi = clase(g)
-                    fx,x,stats = tspi.solve()
-                    if x is not None:
-                        dtalla[nombre] += stats[estadistica]
-            
             print(f'{talla:>5}',end=' ')
             for nombre,clase in repertorio_cotas:
                 media = dtalla[nombre]/numInstancias
@@ -773,7 +774,7 @@ def prueba_mini():
 ######################################################################
             
 if __name__ == '__main__':
-    prueba_mini()
+    #prueba_mini()
     #prueba_generador()
-    #experimento()
+    experimento()
 

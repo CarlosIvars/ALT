@@ -39,33 +39,19 @@ def voraz_x_pieza(costMatrix):
     solution = []
     score = 0
     usadas = set()
+    #para cada pieza
     for fila in range(M):
-        piezas_posibles = [valor for index, valor in enumerate(costMatrix[fila]) if index not in usadas]
-        minValor = min(piezas_posibles)
-        indices_posibles = [ index for index, x  in enumerate(costMatrix[fila]) if x == minValor]
-        pos = 0
-        cond = True
-        while cond:
-            if indices_posibles[pos] not in usadas:
-                score += minValor
-                usadas.add(indices_posibles[pos])
-                solution.append(indices_posibles[pos])
-                cond = False
-            else: # usar el siguiente igual de la lista
-                pos += 1
-                 
+        #extraemos piezas posibles
+        valores_piezas_posibles = [valor for index, valor in enumerate(costMatrix[fila]) if index not in usadas]
+        #coges el minimo de las piezas posibles
+        minValor = min(valores_piezas_posibles)
+        #Escoges las piezas cuyo valor es igual a min valor y no se encuentre en la lista de usadas
+        piezas_posibles = [ index for index, x  in enumerate(costMatrix[fila]) if x == minValor and index not in usadas]
+        #De las posibles piezas a añadir, escogemos la primera posible y la añadimos a la solucion
+        score += minValor
+        usadas.add(piezas_posibles[0])
+        solution.append(piezas_posibles[0])
     return score, solution
-'''
-    for _ in range(M):
-        pieza_limpia = [valor for index, valor in enumerate(costMatrix[_]) if index not in usadas]
-        minN = min(pieza_limpia)
-        print(minN)
-        minPos = costMatrix[_].tolist().index(minN)
-
-        score += minN
-        usadas.add(minPos)
-        solution.append(minPos)
-'''
 
 def voraz_x_instante(costMatrix):
      # costMatrix[i,j] el coste de situar pieza i en instante j
@@ -74,15 +60,22 @@ def voraz_x_instante(costMatrix):
     solution = [None] * M
     usadas = set()
     score = 0
+    #para cada instante de tiempo
     for columna in range(N):
+            #creamos un array con el istante columna para cada una de las filas (coger la columna x de la tabla)
             instantes_posibles =  np.array([fila[columna] for fila in costMatrix])
+            #peor de los casos
             best_score = np.inf
-            for pieza in range(len(instantes_posibles)):
+            #para cada pieza de las posibles
+            for pieza in range(M):
+                #si no esta en usadas
                 if pieza not in usadas: 
+                    #si el valor de esa pieza en el instante es menor al mejor score
                     if instantes_posibles[pieza] < best_score:
+                        #actualizamos el best score y la pieza candidata a ser usada
                         best_score  = instantes_posibles[pieza]
                         pieza_usada = pieza
-
+            #añadimos a la solucion
             solution[pieza_usada] = columna
             score += best_score
             usadas.add(pieza_usada)
@@ -94,18 +87,21 @@ def voraz_x_coste(costMatrix):
     # costMatrix[i,j] el coste de situar pieza i en instante j
     M = costMatrix.shape[0] # nº piezas
     # COMPLETAR
-    #Creación de tripletas
+    #Creación de tripletas  (coste, pieza, instante)
     tripletas = [(costMatrix[i][j], i, j) for i in range(M) for j in range(M)]
     #ordenamos las tripletas por coste
     tripletas.sort()
 
-    usadas = set()
+    i_usadas = set()
     p_usadas = set()
     score =  0
     solution = [0] * M
+    #para cada tripleta
     for tripleta in tripletas:
-        if tripleta[2] not in usadas and tripleta[1] not in p_usadas:
-            usadas.add(tripleta[2])
+        #si la el instante(tripleta[2]) no esta usado y la pieza tampoco esta en uso
+        if tripleta[2] not in i_usadas and tripleta[1] not in p_usadas:
+            #añandimos esa pieza a la solucion
+            i_usadas.add(tripleta[2])
             p_usadas.add(tripleta[1])
             solution[tripleta[1]] = tripleta[2]
             score += tripleta[0]
@@ -115,10 +111,12 @@ def voraz_x_coste(costMatrix):
 def voraz_combina(costMatrix):
     
     # COMPLETAR
+    #sacamos el coste y la solucion de cada uno de los voraces y extraemos el minimo
     cp ,sp = voraz_x_pieza(costMatrix)
     ci, si = voraz_x_instante(costMatrix)
     cc, sc = voraz_x_coste(costMatrix)
     score = min(cp,ci,cc)
+    #vemos que solucion coincide con el valor del score
     solution = sp if score == cp else (si if score == ci else sc) 
     
     return score,solution
@@ -268,22 +266,29 @@ def comparar_sol_inicial(root_seed, low, high):
     
     #primeras estadísticas
     print('talla',end=' ')
+    #imprimir titulos de las columnas
     for label in cjtAlgoritmos:
         print(f'{label:>10}',end=' ')
     print()
+    #numero de instancias a establecer
     numInstancias = 10
+    #Por cada talla 
     for talla in range(5,15+1):
+       #creamos un diccionario para guardar las estadisticas
         dtalla = collections.defaultdict(float)
 
+        #cogemos una semilla
         np.random.seed(root_seed)
         seeds = np.random.randint(low=0, high=9999, size=numInstancias)
-
+        #para cada semilla 
         for seed in seeds:
+            #creamos una instancia
             cM = genera_instancia(talla, low=low, high=high, seed=seed)
             for label,function in cjtAlgoritmos.items():
                 score,solution = function(cM)
+                #añadimos al diccionario la score en la entrada labal(nombre de la columna)
                 dtalla[label] += score
-
+    #imprimimps los valores del diccionario haciendo la media para cada columna
         print(f'{talla:>5}',end=' ')
         for label in cjtAlgoritmos:
             media = dtalla[label]/numInstancias
@@ -314,7 +319,7 @@ def comparar_sol_inicial(root_seed, low, high):
                 for label,function in cjtAlgoritmos.items():
                     
                     intial_c, initial_sol = function(cM)
-                        
+                    #si es RyP no hagas solucion inicial  
                     if label == 'RyP':
                         initial_c, initial_sol = np.inf, None
                     
