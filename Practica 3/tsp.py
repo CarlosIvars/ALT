@@ -466,19 +466,15 @@ class TSP_Cota4(TSP):
     no visitado (más el último visitado). 
     Es fácil calcularla de manera incremental.
     '''
-    #atributo de la classe
-    tabla = None
+    def __init__(self, graph, first_vertex=0):
+        super().__init__(graph, first_vertex)
+        self.tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes()}
 
     def initial_solution(self):
-        initial = [ self.first_vertex ]
-        
-        if TSP_Cota4.tabla is None:
-           TSP_Cota4.tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes()}   
-               
-        initial_score = sum(TSP_Cota4.tabla.values())##cota óptima, sumar todos los pesos del diccionario
+        initial = [ self.first_vertex ]         
+        initial_score = sum(self.tabla.values())##cota óptima, sumar todos los pesos del diccionario
         return (initial_score, initial)
 
-    
     def branch(self, s_score, s):
         '''
         s_score es el score de s
@@ -487,7 +483,7 @@ class TSP_Cota4(TSP):
         lastvertex = s[-1]
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score - TSP_Cota4.tabla.get(lastvertex, 0) + w, s+[v])   
+                yield (s_score - self.tabla.get(lastvertex, 0) + w, s+[v])   
 
 
 class TSP_Cota5(TSP):
@@ -499,7 +495,7 @@ class TSP_Cota5(TSP):
     '''
 
     def initial_solution(self):
-        initial = [ self.first_vertex ]        
+        initial = [ self.first_vertex ]
         initial_score = 0
         return (initial_score, initial)
 
@@ -508,17 +504,34 @@ class TSP_Cota5(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
+        """
+
+        def branch(self, s_score, s):
+            lastvertex = s[-1]
+            for v, w in self.G.edges_from(lastvertex):
+                if v not in s:
+                    aux = 0
+                    for v2 in self.G.nodes():
+                        if v2 not in s:
+                            aux += self.G.lowest_out_weight(v2, s[1:]+[v])
+                    s_score = self.G.path_weight(s+[v])
+                    yield (s_score + aux, s+[v])"""
+                
         lastvertex = s[-1]   
-        aux = 0       
-               
+        
+        #branchear solucion
         for v,w in self.G.edges_from(lastvertex):
-            if v not in s:     
-                
-                ##aristas de menor costes que salen de 
-                
-                aux += self.G.lowest_out_weight(v, s[1:]) ##arista de menor coste del nodo que añadimos a la solución 
-                   
-                yield (self.G.path_weight(s) + w + aux, s+[v])
+            if v not in s:
+                aux = 0  
+                for vertex in self.G.nodes():  
+                    #añadimos el menor peso de los no vistiados a los no visitados menos el origen
+                    #Nota: contamos v como un visitado, pues es el que estamos analizando ahora
+                    if vertex not in s:
+                        aux += self.G.lowest_out_weight(vertex, s[1:]+[v])
+                        
+                #solucion calculado de añadir el nuevo vertice
+                aux_score = self.G.path_weight(s+[v])
+                yield (aux_score + aux, s+[v])
     
     
 
@@ -533,15 +546,13 @@ class TSP_Cota6(TSP):
     vértice al inicial.
     '''
     
-    dij = None
-    
+    def __init__(self, graph, first_vertex=0):
+        super().__init__(graph, first_vertex)
+        self.dij = self.G.Dijkstra(self.first_vertex, reverse=True)[0]
+        
     def initial_solution(self):
         initial = [ self.first_vertex ]
-        initial_score = 0
-        
-        if TSP_Cota6.dij is None:
-            TSP_Cota6.dij = self.G.Dijkstra(self.first_vertex, reverse=True)[0]
-        
+        initial_score = 0    
         return (initial_score, initial)
     
     def branch(self, s_score, s):
@@ -553,7 +564,7 @@ class TSP_Cota6(TSP):
         lastvertex = s[-1]   
         for v,w in self.G.edges_from(lastvertex):
             if v not in s:
-                yield (s_score + w - TSP_Cota6.dij.get(lastvertex, 0) + TSP_Cota6.dij.get(v, 0), s+[v])
+                yield (s_score + w - self.dij.get(lastvertex, 0) + self.dij.get(v, 0), s+[v])
     
 
 class TSP_Cota7(TSP):
