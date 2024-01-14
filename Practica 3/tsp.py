@@ -504,18 +504,8 @@ class TSP_Cota5(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
-        """
 
-        def branch(self, s_score, s):
-            lastvertex = s[-1]
-            for v, w in self.G.edges_from(lastvertex):
-                if v not in s:
-                    aux = 0
-                    for v2 in self.G.nodes():
-                        if v2 not in s:
-                            aux += self.G.lowest_out_weight(v2, s[1:]+[v])
-                    s_score = self.G.path_weight(s+[v])
-                    yield (s_score + aux, s+[v])"""
+        
                 
         lastvertex = s[-1]   
         
