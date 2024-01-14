@@ -466,13 +466,15 @@ class TSP_Cota4(TSP):
     no visitado (más el último visitado). 
     Es fácil calcularla de manera incremental.
     '''
+    #inicializar atributo de clase, tabla con los menores pesos de cada nodo
     def __init__(self, graph, first_vertex=0):
         super().__init__(graph, first_vertex)
         self.tabla = {v: self.G.lowest_out_weight(v) for v in self.G.nodes()}
-
+    #Solucion inicial
     def initial_solution(self):
-        initial = [ self.first_vertex ]         
-        initial_score = sum(self.tabla.values())##cota óptima, sumar todos los pesos del diccionario
+        initial = [ self.first_vertex ]
+        #puntuacion inicial cota óptima, sumar todos los pesos del diccionario      
+        initial_score = sum(self.tabla.values())
         return (initial_score, initial)
 
     def branch(self, s_score, s):
@@ -480,9 +482,13 @@ class TSP_Cota4(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
+        #el ultimo nodo
         lastvertex = s[-1]
+        # para cada nodo sucesor del ultimo
         for v,w in self.G.edges_from(lastvertex):
+            #si el nodo no esta en la solucion
             if v not in s:
+                #generamos un nodo hijo
                 yield (s_score - self.tabla.get(lastvertex, 0) + w, s+[v])   
 
 
@@ -493,7 +499,7 @@ class TSP_Cota5(TSP):
     y llegan a vértices no visitados o al vértice origen.
     No es incremental.
     '''
-
+    #solucion inicial el primer nodo 
     def initial_solution(self):
         initial = [ self.first_vertex ]
         initial_score = 0
@@ -504,18 +510,19 @@ class TSP_Cota5(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
-
-        
-                
+       #ultimo nodo
         lastvertex = s[-1]   
         
-        #branchear solucion
+        # para cada nodo sucesor del ultimo
         for v,w in self.G.edges_from(lastvertex):
+            #si no esta el nodo en la solucion
             if v not in s:
                 aux = 0  
+                #para cada vertice del grafo
                 for vertex in self.G.nodes():  
                     #añadimos el menor peso de los no vistiados a los no visitados menos el origen
                     #Nota: contamos v como un visitado, pues es el que estamos analizando ahora
+                    #lowest_out_weight(vertex__el menor peso que salga de vertex, s[1:]+[v]___ evitando llegar al los que estan en s menos el primero y v)
                     if vertex not in s:
                         aux += self.G.lowest_out_weight(vertex, s[1:]+[v])
                         
@@ -535,11 +542,12 @@ class TSP_Cota6(TSP):
     calcular en una sola pasada los caminos desde cada
     vértice al inicial.
     '''
-    
+    #creamos atributo de clase, un diccionario con el coste del minimo camino de cada nodo hacia el origen, reverse = true
     def __init__(self, graph, first_vertex=0):
         super().__init__(graph, first_vertex)
         self.dij = self.G.Dijkstra(self.first_vertex, reverse=True)[0]
-        
+
+    #solucion inicial a 0 partiendo del primer nodo   
     def initial_solution(self):
         initial = [ self.first_vertex ]
         initial_score = 0    
@@ -550,10 +558,13 @@ class TSP_Cota6(TSP):
         s_score es el score de s
         s es una solución parcial
         '''
-
-        lastvertex = s[-1]   
+        #ultimo vertice
+        lastvertex = s[-1]
+        #para cada sucesor de last vertex   
         for v,w in self.G.edges_from(lastvertex):
+            #si no se encuentra en la solucion
             if v not in s:
+                #generamos los hijos, la cota que tenias antes + lo que te falta para llegar a v
                 yield (s_score + w - self.dij.get(lastvertex, 0) + self.dij.get(v, 0), s+[v])
     
 
@@ -565,6 +576,7 @@ class TSP_Cota7(TSP):
     el primero y el último de la solución parcial).
     No admite sol. incremental.
     '''
+    #igual que la 6, solucion inicial a 0
     def initial_solution(self):
         initial = [ self.first_vertex ]
         initial_score = 0
@@ -572,10 +584,13 @@ class TSP_Cota7(TSP):
 
     def branch(self, s_score, s):
         #s_score es el score de s
-        #s es una solución parcial
+        #s es una solución parcial no la final como antes
         lastvertex = s[-1]
+        #para cada sucesor de last vertex   
         for v,w in self.G.edges_from(lastvertex):
+            #si no esta en la solucion
             if v not in s: 
+                #pathweith, coste hasta llegar a s + w + dijkstra hasta el origen evitando los nodos que pasen por s , 3 argumento de dijkstra es dorbiden, lo q no se incluye
                 yield (self.G.path_weight(s) + w + self.G.Dijkstra1dst(v, self.first_vertex, s[1:]), s+[v])
 
 
@@ -774,7 +789,7 @@ def prueba_mini():
 ######################################################################
             
 if __name__ == '__main__':
-    #prueba_mini()
+    prueba_mini()
     #prueba_generador()
     experimento()
 
